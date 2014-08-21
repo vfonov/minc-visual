@@ -1,0 +1,9 @@
+[submodule "brain-view2"]
+	path = brain-view2
+	url = https://github.com/sghanavati/brain-view2.git
+[submodule "itk-snap"]
+	path = itk-snap
+	url = http://git.code.sf.net/p/itk-snap/src
+[submodule "vv"]
+	path = vv
+	url = https://github.com/vfonov/vv.git
