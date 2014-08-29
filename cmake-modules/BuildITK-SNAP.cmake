@@ -1,8 +1,6 @@
-macro(build_vtk install_prefix staging_prefix)
+macro(build_itk_snap install_prefix staging_prefix)
   find_package(Threads REQUIRED)
 
-  SET(VTK_SHARED_LIBRARY ON)
-  
   if(CMAKE_EXTRA_GENERATOR)
     set(CMAKE_GEN "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
   else()
@@ -20,12 +18,11 @@ macro(build_vtk install_prefix staging_prefix)
     )
   endif()
 
-  ExternalProject_Add(VTK
-    URL  "http://www.vtk.org/files/release/5.8/vtk-5.8.0.tar.gz"
-    URL_MD5 "37b7297d02d647cc6ca95b38174cb41f"
-    UPDATE_COMMAND ""
-    SOURCE_DIR VTK
-    BINARY_DIR VTK-build
+  ExternalProject_Add(ITK_SNAP
+    GIT_REPOSITORY  "http://git.code.sf.net/p/itk-snap/src "
+    GIT_TAG "v3.0.0"
+    SOURCE_DIR ITK_SNAP
+    BINARY_DIR ITK_SNAP-build
     CMAKE_GENERATOR ${CMAKE_GEN}
     CMAKE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
@@ -47,6 +44,6 @@ macro(build_vtk install_prefix staging_prefix)
     INSTALL_DIR ${staging_prefix}/${install_prefix}
   )
 
-  SET(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/VTK-build)
+  SET(ITK_SNAP_DIR ${CMAKE_CURRENT_BINARY_DIR}/ITK_SNAP-build)
 
 endmacro(build_vtk)

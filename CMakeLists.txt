@@ -2,7 +2,7 @@ project(minc-visual)
 enable_language(C)
 enable_language(CXX)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 SET(MINC_VISUAL_PACKAGE_VERSION_MAJOR 0)
 SET(MINC_VISUAL_PACKAGE_VERSION_MINOR 9)
@@ -51,6 +51,7 @@ SET(CPACK_PACKAGE_FILE_NAME "minc-visual-${MINC_VISUAL_VERSION_FULL}-${MT_SYSTEM
 # register local modules
 SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_SOURCE_DIR}/cmake-modules")
 INCLUDE(PreventInSourceBuilds)
+include(ExternalProject)
 AssureOutOfSourceBuilds(minc-visual)
 
 # default install directories
@@ -81,20 +82,28 @@ FIND_PACKAGE( GLUT   REQUIRED )
 FIND_PACKAGE( X11    QUIET )
 
 # minc stuff, provided by minc-toolkit
-FIND_PACKAGE( LIBMINC2 REQUIRED )
+FIND_PACKAGE( LIBMINC  REQUIRED )
 FIND_PACKAGE( BICPL    REQUIRED )
+
+FIND_PACKAGE(ITK REQUIRED)
 
 INCLUDE(${LIBMINC_USE_FILE})
 
+#INCLUDE(BuildCoin)
 INCLUDE(BuildQT)
 INCLUDE(BuildVTK)
-#INCLUDE(BuildCoin)
 #INCLUDE(BuildQuarter)
 
-#build_qt(${CMAKE_INSTALL_PREFIX} ${SUPERBUILD_STAGING_PREFIX})
-build_vtk(${CMAKE_INSTALL_PREFIX} ${SUPERBUILD_STAGING_PREFIX})
 #build_coin(${CMAKE_INSTALL_PREFIX} ${SUPERBUILD_STAGING_PREFIX})
+build_qt(${CMAKE_INSTALL_PREFIX} ${SUPERBUILD_STAGING_PREFIX})
+build_vtk(${CMAKE_INSTALL_PREFIX} ${SUPERBUILD_STAGING_PREFIX})
 #build_quarter(${CMAKE_INSTALL_PREFIX} ${SUPERBUILD_STAGING_PREFIX})
+
+add_dependencies(VTK QT)
+#add_dependencies(COIN QT)
+#add_dependencies(QUARTER COIN)
+#add_dependencies(QUARTER QT )
+
 
 
 INSTALL(DIRECTORY ${SUPERBUILD_STAGING_PREFIX}/${CMAKE_INSTALL_PREFIX}/bin

@@ -1,14 +1,24 @@
-macro(build_vtk install_prefix staging_prefix)
-  find_package(Threads REQUIRED)
+macro(build_quarter install_prefix staging_prefix)
 
-  SET(VTK_SHARED_LIBRARY ON)
+  SET(QUARTER_SHARED_LIBRARY ON)
+
+  IF(${CMAKE_BUILD_TYPE} STREQUAL Release)
+    SET(EXT_C_FLAGS   "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}")
+    SET(EXT_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+  ELSE()
+    SET(EXT_C_FLAGS   "${CMAKE_C_FLAGS}    ${CMAKE_C_FLAGS_DEBUG}")
+    SET(EXT_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
+  ENDIF()
   
+  message("QT_DIR=${QT_DIR} COIN_DIR=${COIN_DIR}")
+
+
   if(CMAKE_EXTRA_GENERATOR)
     set(CMAKE_GEN "${CMAKE_EXTRA_GENERATOR} - ${CMAKE_GENERATOR}")
   else()
     set(CMAKE_GEN "${CMAKE_GENERATOR}")
   endif()
-  
+
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
     list(APPEND CMAKE_OSX_EXTERNAL_PROJECT_ARGS
@@ -20,16 +30,16 @@ macro(build_vtk install_prefix staging_prefix)
     )
   endif()
 
-  ExternalProject_Add(VTK
-    URL  "http://www.vtk.org/files/release/5.8/vtk-5.8.0.tar.gz"
-    URL_MD5 "37b7297d02d647cc6ca95b38174cb41f"
-    UPDATE_COMMAND ""
-    SOURCE_DIR VTK
-    BINARY_DIR VTK-build
-    CMAKE_GENERATOR ${CMAKE_GEN}
+  
+  ExternalProject_Add(QUARTER
+    URL  "https://bitbucket.org/Coin3D/quarter/get/quarter-1_0_0.tar.gz"
+    URL_MD5 "8d24eb9e11ec163883a2ae2f9b66c1b2"
+  SOURCE_DIR QUARTER
+  BINARY_DIR QUARTER_build
+  CMAKE_GENERATOR ${CMAKE_GEN}
     CMAKE_ARGS
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-        -DBUILD_SHARED_LIBS:BOOL=${VTK_SHARED_LIBRARY}
+        -DBUILD_SHARED_LIBS:BOOL=${QUARTER_SHARED_LIBRARY}
         -DCMAKE_SKIP_RPATH:BOOL=YES
         -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
@@ -38,15 +48,14 @@ macro(build_vtk install_prefix staging_prefix)
         -DCMAKE_MODULE_LINKER_FLAGS:STRING=${CMAKE_MODULE_LINKER_FLAGS}
         -DCMAKE_SHARED_LINKER_FLAGS:STRING=${CMAKE_SHARED_LINKER_FLAGS}
         ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-        -DBUILD_EXAMPLES:BOOL=OFF
-        -DBUILD_TESTING:BOOL=OFF
-        -DVTK_USE_QT:BOOL=ON
-        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_DIR}/bin/qmake
-        -DQT_UIC3_EXECUTABLE:FILEPATH=${QT_DIR}/bin/uic3
+#        -DBUILD_EXAMPLES:BOOL=OFF
+#        -DBUILD_TESTING:BOOL=OFF
+#        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_DIR}/bin/qmake
+#        -DQT_UIC3_EXECUTABLE:FILEPATH=${QT_DIR}/bin/uic3
     INSTALL_COMMAND make install DESTDIR=${staging_prefix}
     INSTALL_DIR ${staging_prefix}/${install_prefix}
   )
-
-  SET(VTK_DIR ${CMAKE_CURRENT_BINARY_DIR}/VTK-build)
-
-endmacro(build_vtk)
+  
+  # 
+  SET(QUARTER_DIR ${CMAKE_BINARY_DIR}/external)
+endmacro(build_quarter)
